@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="theme-color" content="#f5f3ef"/>
+  <title>Admin | Tonhosolo Obras</title>
+  <link rel="icon" type="image/png" href="../assets/monograma-tonhosolo.png"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+<div class="dashboard">
+  <aside class="sidebar">
+    <a href="../" class="sidebar-logo" aria-label="Ver landing page"><img src="../assets/monograma-tonhosolo.png" alt=""/><span><strong>TONHOSOLO</strong><small>PAINEL ADMINISTRATIVO</small></span></a>
+    <div class="sidebar-caption">GERENCIAMENTO</div>
+    <nav class="side-nav" aria-label="Seções do editor">
+      <button type="button" class="nav-item active" data-tab="links"><span data-nav-icon="link"></span> Links e ícones <span class="nav-arrow">›</span></button>
+      <button type="button" class="nav-item" data-tab="conteudo"><span data-nav-icon="edit"></span> Conteúdo <span class="nav-arrow">›</span></button>
+      <button type="button" class="nav-item" data-tab="aparencia"><span data-nav-icon="palette"></span> Aparência <span class="nav-arrow">›</span></button>
+      <button type="button" class="nav-item" data-tab="contato"><span data-nav-icon="phone"></span> Contatos <span class="nav-arrow">›</span></button>
+      <button type="button" class="nav-item" data-tab="configuracoes"><span data-nav-icon="settings"></span> Configurações <span class="nav-arrow">›</span></button>
+    </nav>
+    <div class="sidebar-bottom"><div class="status-box"><span class="status-dot"></span><div><strong id="status-title">Modo local</strong><small id="status-desc">Edições salvas neste dispositivo</small></div></div><a class="visit-site" href="../" target="_blank" rel="noopener noreferrer">Ver página pública <span>↗</span></a><button class="logout hidden" id="logout" type="button">Sair da conta</button></div>
+  </aside>
+  <main class="main-panel">
+    <div class="topbar"><div class="breadcrumbs">TONHOSOLO <span>/</span> EDITOR DE PÁGINA</div><div class="top-actions"><span id="save-status" class="save-state">Rascunho pronto</span><button type="button" id="download-config" class="btn btn-subtle"><span class="btn-icon" data-btn-icon="download"></span><span>Baixar atualização</span></button><button type="button" id="publish" class="btn btn-primary"><span class="btn-icon" data-btn-icon="check"></span><span id="publish-label">Exportar página</span></button></div></div>
+    <div class="editor-area">
+      <div class="editor-column"><div class="heading-area"><div class="preheading"><span class="gold-line"></span> PERSONALIZE SUA LANDING PAGE</div><h1 id="tab-heading">Links e ícones</h1><p id="tab-description">Adicione seus destinos, escolha o ícone de cada botão e organize a ordem em que aparecerão na bio.</p></div><div id="edit-content" class="edit-content" aria-live="polite"></div></div>
+      <aside class="preview-column"><div class="preview-head"><div><strong>Prévia em tempo real</strong><small>As mudanças aparecem automaticamente</small></div><span class="live-label"><span></span> AO VIVO</span></div><div class="phone"><div class="phone-bar" aria-hidden="true"><span></span></div><iframe id="site-preview" title="Prévia da página Tonhosolo Obras" src="../index.html?preview=1"></iframe></div><div class="preview-note">Esta é uma prévia. Para todos verem as mudanças, publique no Firebase ou faça um novo deploy com o arquivo exportado.</div></aside>
+    </div>
+  </main>
+</div>
+<div class="dialog-backdrop hidden" id="icon-backdrop"><div class="icon-modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading"><div class="modal-head"><div><p>PERSONALIZAÇÃO</p><h2 id="modal-heading">Escolha um ícone</h2></div><button class="icon-close" id="close-icon" type="button" aria-label="Fechar"></button></div><p class="modal-desc">Escolha o símbolo que melhor representa o destino deste link.</p><div id="icon-grid" class="icon-grid"></div></div></div>
+<div class="auth-backdrop hidden" id="auth-backdrop"><form id="auth-form" class="auth-card"><img src="../assets/monograma-tonhosolo.png" alt="Monograma Tonhosolo"/><span class="auth-label">ÁREA RESTRITA</span><h2>Entrar no painel</h2><p>Use uma conta do Firebase Authentication autorizada nas regras do Firestore.</p><label>E-mail<input id="login-email" type="email" autocomplete="username" placeholder="seu@email.com" required/></label><label>Senha<input id="login-password" type="password" autocomplete="current-password" placeholder="Sua senha" required minlength="6"/></label><p id="login-error" class="login-error" role="alert"></p><button type="submit" id="login-btn" class="btn btn-primary auth-submit">Entrar no painel →</button><a href="../">← Voltar ao site</a></form></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div><input type="file" id="import-file" accept="application/json,.json" hidden/>
+<script src="../defaults.js"></script><script src="../firebase-config.js"></script><script src="../icons.js"></script><script src="../shared.js"></script><script src="./admin.js"></script>
+</body></html>
