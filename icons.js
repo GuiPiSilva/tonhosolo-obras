@@ -1,0 +1,50 @@
+(function(){
+  const paths = {
+    'whatsapp':'<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.4 8.4 0 0 1-4-.9L3 21l1.8-5a8.4 8.4 0 1 1 16.2-4.5Z"/><path d="M9 8.7c.3-.4.7-.4.9-.1l1 1.6c.2.4.2.5-.2.9l-.4.5a7.6 7.6 0 0 0 2.6 2.4l.5-.5c.3-.3.5-.3.8-.1l1.6.8c.5.3.5.7.2 1.1a2.3 2.3 0 0 1-2.5 1 9.2 9.2 0 0 1-5.1-4.4c-.4-.8-.3-1.5.6-2.8Z"/>',
+    'instagram':'<rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.7 6.3h.01" stroke-width="3" stroke-linecap="round"/>',
+    'hard-hat':'<path d="M3 18h18v3H3zM5 18v-4a7 7 0 0 1 14 0v4M12 7V4M9 8l-1-3M15 8l1-3"/>',
+    'images':'<rect x="6" y="6" width="15" height="15" rx="2"/><path d="M3 17V5a2 2 0 0 1 2-2h12M8 18l4.5-5 3 3 2-2 3 3M16 10h.01"/>',
+    'map-pin':'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
+    'mail':'<rect x="2" y="4" width="20" height="16" rx="3"/><path d="m3 6 9 7 9-7"/>',
+    'phone':'<path d="M7 3H4a2 2 0 0 0-2 2c.3 8.8 8.2 16.8 17 17a2 2 0 0 0 2-2v-3l-5-2-2.2 2.1a15.5 15.5 0 0 1-7-7L9 8Z"/>',
+    'globe':'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+    'calendar':'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/>',
+    'file-text':'<path d="M6 2h9l5 5v15H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Z"/><path d="M14 2v6h6M8 13h8M8 17h8"/>',
+    'star':'<path d="m12 2 3.1 6.3 7 1-5.1 5 1.2 7-6.2-3.3-6.2 3.3 1.2-7-5.1-5 7-1Z"/>',
+    'building':'<rect x="4" y="3" width="16" height="19" rx="2"/><path d="M9 22v-5h6v5M8 7h1M15 7h1M8 11h1M15 11h1"/>',
+    'hammer':'<path d="m14 5 5 5M12 7l5 5M13 3l8 8M11 9 3 17l3 3 8-8"/>',
+    'paintbrush':'<path d="M18 2 9 11l4 4 9-9-4-4ZM9 11l-2 2M7 13a4 4 0 0 0-4 4c0 1.6-.3 3.1-1 5 2-1 3.4-1 5-1a4 4 0 0 0 4-4Z"/>',
+    'shield-check':'<path d="M12 2 4 5v6c0 5 3.3 8.5 8 11 4.7-2.5 8-6 8-11V5l-8-3Z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+    'video':'<rect x="3" y="5" width="14" height="14" rx="2"/><path d="m17 9 5-3v12l-5-3"/>',
+    'youtube':'<rect x="2" y="5" width="20" height="14" rx="4"/><path d="m10 9 5 3-5 3Z"/>',
+    'facebook':'<circle cx="12" cy="12" r="10"/><path d="M14 21v-9h3v-3h-3V7c0-1 .5-1 2-1h1V3h-2c-3.5 0-4 2-4 4v2H9v3h2v9"/>',
+    'linkedin':'<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M8 10v7M8 7v.1M12 17v-7M12 13a3 3 0 0 1 6 0v4"/>',
+    'link':'<path d="M10 13a5 5 0 0 0 7 .1l3-3A5 5 0 0 0 13 3l-2 2M14 11a5 5 0 0 0-7-.1l-3 3A5 5 0 0 0 11 21l2-2"/>',
+    'message-circle':'<path d="M21 11.5a8.5 8.5 0 0 1-9 8.5c-1.2 0-2.4-.3-3.5-.8L3 21l1.8-5.5A8.5 8.5 0 1 1 21 11.5Z"/>',
+    'arrow-up-right':'<path d="M5 19 19 5M8 5h11v11"/>',
+    'arrow-right':'<path d="M4 12h16m-7-7 7 7-7 7"/>',
+    'plus':'<path d="M12 5v14M5 12h14"/>',
+    'trash':'<path d="M3 6h18M9 6V4h6v2M5 6l1 15h12l1-15M10 10v7M14 10v7"/>',
+    'chevron-up':'<path d="m5 14 7-7 7 7"/>',
+    'chevron-down':'<path d="m5 10 7 7 7-7"/>',
+    'check':'<path d="m5 12 4 4L19 6"/>',
+    'menu':'<path d="M4 7h16M4 12h16M4 17h16"/>',
+    'x':'<path d="M5 5 19 19M19 5 5 19"/>',
+    'eye':'<path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+    'edit':'<path d="m4 16-1 5 5-1L20 8l-4-4L4 16ZM13 7l4 4"/>',
+    'upload':'<path d="M12 16V3m-5 5 5-5 5 5M4 16v4h16v-4"/>',
+    'download':'<path d="M12 3v13m-5-5 5 5 5-5M4 17v4h16v-4"/>',
+    'log-out':'<path d="M9 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4M14 4l7 8-7 8M21 12H9"/>',
+    'settings':'<path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8ZM19.4 15a1.8 1.8 0 0 1 .3 2l-2 2a1.8 1.8 0 0 1-2-.3l-1-.4a1.8 1.8 0 0 1-1.7 1h-2a1.8 1.8 0 0 1-1.7-1l-1 .4a1.8 1.8 0 0 1-2 .3l-2-2a1.8 1.8 0 0 1 .3-2L5 14a1.8 1.8 0 0 1-1-1.7v-1a1.8 1.8 0 0 1 1-1.7l-.4-1a1.8 1.8 0 0 1-.3-2l2-2a1.8 1.8 0 0 1 2 .3l1 .4a1.8 1.8 0 0 1 1.7-1h2a1.8 1.8 0 0 1 1.7 1l1-.4a1.8 1.8 0 0 1 2-.3l2 2a1.8 1.8 0 0 1-.3 2l-.4 1a1.8 1.8 0 0 1 1 1.7v1a1.8 1.8 0 0 1-1 1.7Z"/>',
+    'copy':'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>',
+    'external-link':'<path d="M12 4H5a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h13a2 2 0 0 0 2-2v-7M13 3h8v8M21 3l-10 10"/>',
+    'palette':'<path d="M12 2a10 10 0 0 0 0 20h1a2 2 0 0 0 2-2 2 2 0 0 0-.4-1.2 2 2 0 0 1 1.6-3.2h2A3.8 3.8 0 0 0 22 12 10 10 0 0 0 12 2Z"/><path d="M6 12h.01M9 7h.01M15 7h.01M18 11h.01" stroke-width="3"/>',
+    'grip':'<circle cx="9" cy="5" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="19" r="1"/>',
+    'share':'<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.5 10.5 7-4M8.5 13.5l7 4"/>'
+  };
+  const labels={'whatsapp':'WhatsApp','instagram':'Instagram','hard-hat':'Obras','images':'Galeria','map-pin':'Localização','mail':'E-mail','phone':'Telefone','globe':'Website','calendar':'Agenda','file-text':'Documento','star':'Destaque','building':'Empresa','hammer':'Ferramentas','paintbrush':'Acabamentos','shield-check':'Garantia','video':'Vídeo','youtube':'YouTube','facebook':'Facebook','linkedin':'LinkedIn','link':'Link','message-circle':'Mensagem'};
+  window.TSIcons={
+    list:Object.keys(labels).map(key=>({key,label:labels[key]})),
+    svg(name,className=''){const valid=Object.prototype.hasOwnProperty.call(paths,name)?name:'link';return '<svg class="'+className+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">'+paths[valid]+'</svg>';}
+  };
+})();
