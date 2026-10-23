@@ -6,7 +6,7 @@ Site estático pronto para Vercel. O logotipo enviado está em `assets/logo-tonh
 Abra `index.html` em um servidor local, ex.: `python -m http.server 8000`, e visite `http://localhost:8000/`. O editor está em `/admin/`.
 
 ## Personalização sem Firebase
-Em `/admin/` edite links, ícones, textos, cores, serviços e canais de contato. A prévia é imediata. Clique em **Baixar atualização** para obter `defaults.js`, substitua o arquivo na raiz do projeto e faça novo deploy. **Sem Firebase, edições não são salvas entre recarregamentos**. O painel em modo local é um editor público de testes, não uma área protegida: não coloque dados privados nele.
+Em `/admin/` edite links, ícones, textos, cores, serviços e canais de contato. A prévia é imediata. Clique em **Baixar atualização** para obter `defaults.js`, substitua o arquivo na raiz do projeto e faça novo deploy. **Sem Firebase, o rascunho fica salvo apenas neste navegador** (via localStorage). Isso não publica mudanças para os visitantes: exporte o arquivo e faça novo deploy. O painel em modo local é um editor público de testes, não uma área protegida: não coloque dados privados nele.
 
 ## Publicação ao vivo via Firebase
 1. Crie um projeto Firebase, ative Firestore e **Authentication > Email/senha**.
@@ -24,3 +24,10 @@ Em `/admin/` edite links, ícones, textos, cores, serviços e canais de contato.
 - `firebase-config.js` / `firestore.rules` — integração opcional
 
 Os links oficiais da empresa precisam ser preenchidos pelo administrador; o modelo não inventa números de telefone nem URLs de redes sociais.
+
+## Diagnóstico do painel
+- Se a URL `/admin/` pedir autenticação da **Vercel**, confira a configuração de **Deployment Protection** no projeto Vercel. Essa proteção é independente do login do Firebase. Nunca desative a proteção apenas para expor um painel com dados sensíveis.
+- Se o painel abrir com **Modo local** e o botão **Exportar página**, o arquivo `firebase-config.js` ainda não contém os dados públicos do projeto Firebase. Nesse modo, é possível editar, manter um rascunho no próprio navegador e exportar `defaults.js`, mas não publicar online diretamente.
+- Para ativar **Publicar alterações**, configure Firebase Web, Authentication, Firestore, as regras e o documento `siteAdmins/{uid}` como indicado acima. Nunca inclua senhas ou chaves de serviço no repositório.
+- Depois de uma atualização do site, recarregue `/admin/`. Se uma edição antiga continuar aparecendo, use **Configurações → Restaurar padrão** (isso apaga o rascunho do navegador em modo local).
+- Verificação automatizada: execute `node --check admin/admin.js && node tests/admin-regression.cjs`.
