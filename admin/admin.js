@@ -2,14 +2,26 @@
 'use strict';
 const $=id=>document.getElementById(id), U=window.TS, IC=window.TSIcons;
 let cfg=U.normalize(window.TONHOSOLO_DEFAULTS), tab='links', selected=-1, fb=null, user=null, live=false;
+const DRAFT_KEY='tonhosolo.admin.draft.v1';
+let hasLocalDraft=false, storageError=false;
+function restoreDraft(){
+ try{const saved=localStorage.getItem(DRAFT_KEY);if(saved){cfg=U.normalize(JSON.parse(saved));hasLocalDraft=true;}}
+ catch(err){console.warn('Rascunho local indisponível:',err);}
+}
+function saveDraft(){
+ if(live)return;
+ try{localStorage.setItem(DRAFT_KEY,JSON.stringify(U.normalize(cfg)));hasLocalDraft=true;storageError=false;}
+ catch(err){storageError=true;console.warn('Não foi possível salvar o rascunho:',err);toast('Sem espaço para salvar. Exporte o arquivo defaults.js.');}
+}
 const editor=$('edit-content'), iconDialog=$('icon-backdrop');
 const esc=U.esc;
 const field=(key,label,type='text',placeholder='')=>`<label class="field"><span>${esc(label)}</span><input data-field="${key}" type="${type}" value="${esc(cfg[key]||'')}" placeholder="${esc(placeholder)}"></label>`;
 const area=(key,label)=>`<label class="field"><span>${esc(label)}</span><textarea data-field="${key}" rows="3">${esc(cfg[key]||'')}</textarea></label>`;
 const toast=(msg)=>{const node=$('toast');node.textContent=msg;node.classList.add('show');setTimeout(()=>node.classList.remove('show'),3500)};
 const icons=['link','whatsapp','instagram','facebook','youtube','tiktok','globe','phone','mail','map-pin','hammer','hard-hat','building','paintbrush','images','camera','calendar','file-text','star','shield-check','arrow-up-right','shopping-bag','message-circle','wrench','truck','house','check','download'];
-function preview(){const f=$('site-preview');if(f?.contentWindow)f.contentWindow.postMessage({type:'TONHOSOLO_PREVIEW',payload:cfg},location.origin);$('save-status').textContent=live?'Alterações não publicadas':'Edição local';}
-function rerender(){render();preview()}
+function preview(){const f=$('site-preview');if(f?.contentWindow)f.contentWindow.postMessage({type:'TONHOSOLO_PREVIEW',payload:cfg},location.origin);$('save-status').textContent=live?'Alterações não publicadas':storageError?'Rascunho não salvo: exporte uma cópia':hasLocalDraft?'Rascunho salvo neste navegador':'Edição local';}
+function changed(){saveDraft();preview()}
+function rerender(){render();changed()}
 const fields={links:['Links e ícones','Escolha os botões, ícones e destinos exibidos no seu perfil.'],conteudo:['Conteúdo','Edite os textos da página e os serviços apresentados.'],aparencia:['Aparência','Personalize a identidade visual e o logotipo.'],contato:['Contatos','Informe os seus canais oficiais de atendimento.'],configuracoes:['Configurações','Importe e exporte os dados do site.']};
 function render(){
  document.querySelectorAll('[data-tab]').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
@@ -26,8 +38,8 @@ function render(){
  editor.innerHTML=`<div class="edit-card"><h2>Publicação e backup</h2><p class="helper">Sem Firebase, as edições ficam neste navegador. Use “Baixar atualização” para exportar o arquivo defaults.js e substituí-lo no projeto antes do deploy. Com Firebase configurado e conta autorizada, “Publicar” disponibiliza as alterações online.</p><button class="btn btn-subtle" id="export-json">Exportar backup JSON</button> <button class="btn btn-subtle" id="import-json">Importar JSON</button><button class="btn btn-subtle" id="restore">Restaurar padrão</button><h2>SEO</h2>${field('seoTitle','Título para mecanismos de busca')}${area('seoDescription','Descrição da página')}</div>`;
  }
 }
-editor.addEventListener('input',e=>{const el=e.target;if(el.dataset.field){cfg[el.dataset.field]=el.value;preview()}if(el.dataset.link){const i=+el.dataset.i;cfg.links[i][el.dataset.link]=el.type==='checkbox'?el.checked:el.value;preview();if(el.dataset.link==='title'||el.dataset.link==='subtitle'){const row=el.closest('.link-edit');row.querySelector('.link-name strong').textContent=cfg.links[i].title||'Novo link';row.querySelector('.link-name small').textContent=cfg.links[i].subtitle||'Editar link'}}if(el.dataset.service){cfg.services[+el.dataset.i][el.dataset.service]=el.value;preview()}});
-editor.addEventListener('change',async e=>{const el=e.target;if(el.id==='logo-upload'&&el.files[0]){if(el.files[0].size>1500000)return toast('Selecione uma imagem de até 1,5 MB.');const rd=new FileReader();rd.onload=()=>{cfg.logo=String(rd.result);rerender()};rd.readAsDataURL(el.files[0]);}else if(el.dataset.link){cfg.links[+el.dataset.i][el.dataset.link]=el.checked;preview()}});
+editor.addEventListener('input',e=>{const el=e.target;if(el.dataset.field){cfg[el.dataset.field]=el.value;changed()}if(el.dataset.link){const i=+el.dataset.i;cfg.links[i][el.dataset.link]=el.type==='checkbox'?el.checked:el.value;changed();if(el.dataset.link==='title'||el.dataset.link==='subtitle'){const row=el.closest('.link-edit');row.querySelector('.link-name strong').textContent=cfg.links[i].title||'Novo link';row.querySelector('.link-name small').textContent=cfg.links[i].subtitle||'Editar link'}}if(el.dataset.service){cfg.services[+el.dataset.i][el.dataset.service]=el.value;changed()}});
+editor.addEventListener('change',e=>{const el=e.target;if(el.id==='logo-upload'&&el.files[0]){if(el.files[0].size>280000)return toast('Selecione uma imagem de até 280 KB para salvar no navegador.');const rd=new FileReader();rd.onload=()=>{cfg.logo=String(rd.result);rerender()};rd.readAsDataURL(el.files[0]);}});
 editor.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
  if(b.id==='add-link'){cfg.links.push({id:'link-'+Date.now(),title:'Novo link',subtitle:'',url:'',icon:'link',featured:false,visible:true});rerender();return}
  if(b.dataset.remove!==undefined){if(confirm('Remover este link?')){cfg.links.splice(+b.dataset.remove,1);rerender()}return}
@@ -38,7 +50,7 @@ editor.addEventListener('click',e=>{const b=e.target.closest('button');if(!b)ret
  if(b.id==='reset-logo'){cfg.logo='./assets/logo-tonhosolo.png';rerender();return}
  if(b.id==='export-json'){download('tonhosolo-backup.json',JSON.stringify(cfg,null,2),'application/json');return}
  if(b.id==='import-json'){$('import-file').click();return}
- if(b.id==='restore'){if(confirm('Restaurar os dados originais?')){cfg=U.normalize(window.TONHOSOLO_DEFAULTS);rerender()}return}
+ if(b.id==='restore'){if(confirm('Restaurar os dados originais?')){cfg=U.normalize(window.TONHOSOLO_DEFAULTS);if(!live){try{localStorage.removeItem(DRAFT_KEY)}catch{}hasLocalDraft=false;storageError=false;render();preview()}else rerender()}return}
 });
 function openIcons(){$('icon-grid').innerHTML=icons.map(icon=>`<button class="icon-choice" type="button" data-choice="${icon}" title="${icon}">${IC.svg(icon)}<small>${icon}</small></button>`).join('');iconDialog.classList.remove('hidden')}
 $('icon-grid').addEventListener('click',e=>{const b=e.target.closest('[data-choice]');if(!b)return;cfg.links[selected].icon=b.dataset.choice;iconDialog.classList.add('hidden');rerender()});
@@ -49,10 +61,10 @@ function exportJs(){download('defaults.js','window.TONHOSOLO_DEFAULTS = '+JSON.s
 $('download-config').addEventListener('click',exportJs);
 $('publish').addEventListener('click',async()=>{if(!live)return exportJs();if(!user)return toast('Faça login para publicar.');try{$('publish').disabled=true;await fb.store.setDoc(fb.store.doc(fb.db,'sitePages',fb.id),{content:U.normalize(cfg),updatedAt:fb.store.serverTimestamp(),updatedBy:user.uid});$('save-status').textContent='Publicado agora';toast('Alterações publicadas!')}catch(err){toast('Não foi possível publicar: '+(err.code||err.message))}finally{$('publish').disabled=false}});
 $('import-file').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;try{cfg=U.normalize(JSON.parse(await f.text()));rerender();toast('Backup importado. Confira a prévia antes de publicar.')}catch{toast('Arquivo JSON inválido.')}e.target.value=''});
-document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;rerender()}));
+document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{tab=b.dataset.tab;render();preview()}));
 window.addEventListener('message',e=>{if(e.origin===location.origin&&e.source===$('site-preview').contentWindow&&e.data?.type==='TONHOSOLO_PREVIEW_READY')preview()});
-async function init(){if(!window.TONHOSOLO_FIREBASE){render();preview();return}try{fb=await U.connectFirebase();if(!fb){render();return}live=true;$('status-title').textContent='Firebase conectado';$('status-desc').textContent='Requer administrador autorizado';$('publish-label').textContent='Publicar alterações';$('auth-backdrop').classList.remove('hidden');fb.auth.onAuthStateChanged(fb.authorization,async u=>{user=u;if(!u){$('auth-backdrop').classList.remove('hidden');return}try{const perm=await fb.store.getDoc(fb.store.doc(fb.db,'siteAdmins',u.uid));if(!perm.exists()||perm.data().enabled!==true){await fb.auth.signOut(fb.authorization);$('login-error').textContent='Esta conta não tem permissão de administrador.';return}const page=await fb.store.getDoc(fb.store.doc(fb.db,'sitePages',fb.id));if(page.exists()&&page.data().content)cfg=U.normalize(page.data().content);$('auth-backdrop').classList.add('hidden');$('logout').classList.remove('hidden');rerender()}catch(err){$('login-error').textContent='Falha ao verificar autorização: '+(err.code||err.message);await fb.auth.signOut(fb.authorization)}});
+async function init(){if(!window.TONHOSOLO_FIREBASE){restoreDraft();render();preview();return}try{fb=await U.connectFirebase();if(!fb){restoreDraft();render();preview();return}live=true;$('status-title').textContent='Firebase conectado';$('status-desc').textContent='Requer administrador autorizado';$('publish-label').textContent='Publicar alterações';$('auth-backdrop').classList.remove('hidden');fb.auth.onAuthStateChanged(fb.authorization,async u=>{user=u;if(!u){$('auth-backdrop').classList.remove('hidden');return}try{const perm=await fb.store.getDoc(fb.store.doc(fb.db,'siteAdmins',u.uid));if(!perm.exists()||perm.data().enabled!==true){await fb.auth.signOut(fb.authorization);$('login-error').textContent='Esta conta não tem permissão de administrador.';return}const page=await fb.store.getDoc(fb.store.doc(fb.db,'sitePages',fb.id));if(page.exists()&&page.data().content)cfg=U.normalize(page.data().content);$('auth-backdrop').classList.add('hidden');$('logout').classList.remove('hidden');render();preview()}catch(err){$('login-error').textContent='Falha ao verificar autorização: '+(err.code||err.message);await fb.auth.signOut(fb.authorization)}});
  $('auth-form').addEventListener('submit',async e=>{e.preventDefault();$('login-error').textContent='';try{await fb.auth.signInWithEmailAndPassword(fb.authorization,$('login-email').value,$('login-password').value)}catch(err){$('login-error').textContent='Não foi possível entrar: '+(err.code||err.message)}});$('logout').addEventListener('click',()=>fb.auth.signOut(fb.authorization));
- }catch(err){toast('Falha ao conectar Firebase. Configuração local ativa.');live=false}render();preview()}
+ }catch(err){toast('Falha ao conectar Firebase. Configuração local ativa.');live=false;restoreDraft()}render();preview()}
 init();
 })();
