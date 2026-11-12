@@ -10,7 +10,7 @@ window.TONHOSOLO_DEFAULTS = {
   logo: "./assets/logo-tonhosolo.png",
   accent: "#d9ab6d",
   background: "#0b0b0d",
-  whatsapp: "",
+  whatsapp: "11949265268",
   instagram: "",
   location: "",
   email: "",
