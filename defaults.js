@@ -11,7 +11,7 @@ window.TONHOSOLO_DEFAULTS = {
   accent: "#d9ab6d",
   background: "#0b0b0d",
   whatsapp: "11949265268",
-  instagram: "",
+  instagram: "@tonhosolo.obras",
   location: "",
   email: "",
   services: [
